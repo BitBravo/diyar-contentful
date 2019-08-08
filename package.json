@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "watch": "nodemon --exec babel-node index.js",
-    "start": "babel-node index.js",
+    "watch": "nodemon --exec babel-node fetch/index.js",
+    "start": "babel-node fetch/index.js",
     "pandoc": "pandoc ./dist/output.md -f markdown -t docx -o ./dist/output.docx",
     "export": "contentful space export --space-id $COTOKEN --content-file ./dist/contexpo.json",
     "gendoc": "npm run start && npm run pandoc",
-    "all": "npm run export && npm run gendoc"
+    "fetch": "npm run export && npm run gendoc",
+    "upload": "babel-node upload/index.js",
+    "setup": "babel-node upload/setup.js"
   },
   "keywords": [],
   "author": "",

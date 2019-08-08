@@ -1,4 +1,4 @@
-import {findComponent} from "./parser";
+import {findComponent} from "../lib/parser";
 
 export const pageProcessor = (content, page) => {
     return {
