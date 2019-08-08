@@ -28,6 +28,8 @@
     "nodemon": "^1.19.1"
   },
   "dependencies": {
-    "babel-preset-env": "^1.7.0"
+    "babel-preset-env": "^1.7.0",
+    "contentful-import": "^7.5.1",
+    "inquirer": "^6.5.0"
   }
 }
