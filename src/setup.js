@@ -1,5 +1,3 @@
-const spaceImport = require('contentful-import')
-const exportFile = require('../dist/contexpo.json')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
 const path = require('path')
@@ -24,10 +22,6 @@ console.log(`
 
   The ${chalk.green('Content Delivery API Token')}
     will be used to ship published production-ready content in your Gatsby app.
-
-  The ${chalk.green('Content Preview API Token')}
-    will be used to show not published data in your development environment.
-
   Ready? Let's do it! 🎉
 `)
 
@@ -45,51 +39,35 @@ const questions = [
     when: !argv.managementToken,
     message: 'Your Content Management API access token',
   },
-  {
-    name: 'accessToken',
-    when: !argv.accessToken && !process.env.CONTENTFUL_ACCESS_TOKEN_TOKEN,
-    message: 'Your Content Delivery API access token',
-  },
 ]
 
 inquirer
   .prompt(questions)
-  .then(({ spaceId, managementToken, accessToken }) => {
+  .then(({ spaceId, managementToken }) => {
     const { CONTENTFUL_SPACE_ID, CONTENTFUL_ACCESS_TOKEN } = process.env
 
     // env vars are given precedence followed by args provided to the setup
     // followed by input given to prompts displayed by the setup script
     spaceId = CONTENTFUL_SPACE_ID || argv.spaceId || spaceId
     managementToken = argv.managementToken || managementToken
-    accessToken =
-      CONTENTFUL_ACCESS_TOKEN || argv.accessToken || accessToken
 
     console.log('Writing config file...')
-    const configFiles = [`.env.development`]
-      .map(file => path.join(__dirname, '..', file))
+    const configFile = path.join(__dirname, '..', '.env');
 
     const fileContents = [
       `# All environment variables will be sourced`,
       `# and made available to gatsby-config.js, gatsby-node.js, etc.`,
       `# Do NOT commit this file to source control`,
       `CONTENTFUL_SPACE_ID='${spaceId}'`,
-      `CONTENTFUL_ACCESS_TOKEN='${accessToken}'`
+      `CONTENTFUL_ACCESS_TOKEN='${managementToken}'`
     ].join('\n') + '\n'
 
-    configFiles.forEach(file => {
-      writeFileSync(file, fileContents, 'utf8')
-      console.log(`Config file ${chalk.yellow(file)} written`)
-    })
+    writeFileSync(configFile, fileContents, 'utf8')
+    console.log(`Config file ${chalk.yellow(configFile)} written`)
+
     return { spaceId, managementToken }
   })
-  .then(({ spaceId, managementToken }) => 
-    spaceImport({ spaceId, managementToken, content: exportFile })
-  )
   .then((_, error) => {
-    console.log(
-      `All set! You can now run ${chalk.yellow(
-        'yarn run dev'
-      )} to see it in action.`
-    )
+    console.log('All set! You can now');
   })
   .catch(error => console.error(error))
